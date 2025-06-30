@@ -52,3 +52,33 @@ def author_detail(author_id: int, db: Session = Depends(get_db)):
 )
 def author_create(author: schemas.AuthorCreate, db: Session = Depends(get_db)):
     return crud.create_author(db=db, author=author)
+
+
+@app.get("/books/", response_model=schemas.BookList)
+def book_list(
+    author: int = Query(None, description="Author ID"),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(5, le=20),
+    db: Session = Depends(get_db),
+):
+    offset = (page - 1) * per_page
+
+    db_books = crud.get_book_list(
+        db=db, skip=offset, limit=per_page, author_id=author
+    )
+    total_books = crud.get_book_count(db=db)
+    total_pages = (total_books + per_page - 1) // per_page
+
+    return {
+        "page": page,
+        "per_page": per_page,
+        "total_pages": total_pages,
+        "books": db_books,
+    }
+
+
+@app.post(
+    "/books/", response_model=schemas.Book, status_code=status.HTTP_201_CREATED
+)
+def book_create(book: schemas.BookCreate, db: Session = Depends(get_db)):
+    return crud.create_book(db=db, book=book)
