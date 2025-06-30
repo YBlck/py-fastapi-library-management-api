@@ -8,11 +8,6 @@ from db.database import get_db
 app = FastAPI()
 
 
-@app.get("/")
-def root():
-    return {"message": "Hello World!"}
-
-
 @app.get("/authors/", response_model=schemas.AuthorList)
 def author_list(
     page: int = Query(1, ge=1),
