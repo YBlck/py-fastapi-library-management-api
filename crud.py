@@ -29,3 +29,33 @@ def create_author(db: Session, author: schemas.AuthorCreate):
     db.refresh(new_author)
 
     return new_author
+
+
+def get_book_list(
+    db: Session, skip: int, limit: int, author_id: int = None
+) -> list[models.Book]:
+    queryset = db.query(models.Book)
+
+    if author_id is not None:
+        queryset = queryset.filter_by(author_id=author_id)
+
+    return queryset.offset(skip).limit(limit).all()
+
+
+def get_book_count(db: Session) -> int:
+    return db.query(models.Book).count()
+
+
+def create_book(db: Session, book: schemas.BookCreate):
+    new_book = models.Book(
+        title=book.title,
+        summary=book.summary,
+        publication_date=book.publication_date,
+        author_id=book.author_id,
+    )
+
+    db.add(new_book)
+    db.commit()
+    db.refresh(new_book)
+
+    return new_book
