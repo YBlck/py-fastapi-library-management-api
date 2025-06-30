@@ -20,6 +20,13 @@ class Author(AuthorBase):
         from_attributes = True
 
 
+class AuthorList(BaseModel):
+    page: int
+    per_page: int
+    total_pages: int
+    authors: list[Author]
+
+
 class BookBase(BaseModel):
     title: str
     summary: str
