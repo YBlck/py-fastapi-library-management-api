@@ -4,9 +4,7 @@ import schemas
 from db import models
 
 
-def get_author_list(
-    db: Session, skip: int = 0, limit: int = 5
-) -> list[models.Author]:
+def get_author_list(db: Session, skip: int, limit: int) -> list[models.Author]:
     db_authors = db.query(models.Author).offset(skip).limit(limit).all()
 
     return db_authors
